@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Be My Valentine</title>
+    <link rel="stylesheet" href="css/valentine.css" />
+  </head>
+
+  <body>
+    <!-- 🔹 NAME INPUT SCREEN -->
+    <div id="nameBox" style="text-align: center; margin-top: 50px">
+      <h2>Hey 👋</h2>
+
+      <input
+        type="text"
+        id="username"
+        placeholder="Enter your name 💖"
+        style="padding: 10px; font-size: 16px"
+      />
+
+      <br /><br />
+
+      <button onclick="saveName()" class="answerButton">Continue</button>
+    </div>
+
+    <!-- 🔹 MAIN CONTENT (HIDDEN INITIALLY) -->
+    <div id="mainContent" style="display: none">
+      <div id="valentineQuestion">
+        <b id="questionText"></b>
+      </div>
+
+      <button class="answerButton" onclick="handleYes()">Yes</button>
+
+      <button class="answerButton" id="noButton">
+        I no no wanna ｡ﾟ(ﾟ´Д｀ﾟ)ﾟ｡
+      </button>
+
+      <br />
+
+      <img
+        src="please.png"
+        height="498px"
+        width="150px"
+        alt="cat asking question"
+        class="responsive"
+      />
+    </div>
+
+    <!-- 🔹 SCRIPT -->
+    <script>
+      localStorage.removeItem("valentineName");
+      function handleYes() {
+        sendResponse("YES ❤️");
+        location.href = "thankyou.html";
+      }
+
+      function saveName() {
+        const name = document.getElementById("username").value.trim();
+
+        if (name === "") {
+          alert("Please enter your name 😄");
+          return;
+        }
+
+        localStorage.setItem("valentineName", name);
+
+        document.getElementById("nameBox").style.display = "none";
+        document.getElementById("mainContent").style.display = "block";
+
+        document.getElementById("questionText").innerText =
+          `Will you be my valentine, ${name}? 💖`;
+      }
+
+      window.onload = function () {
+        const savedName = localStorage.getItem("valentineName");
+
+        if (savedName) {
+          document.getElementById("nameBox").style.display = "none";
+          document.getElementById("mainContent").style.display = "block";
+
+          document.getElementById("questionText").innerText =
+            `Will you be my valentine, ${savedName}? 💖`;
+        }
+      };
+
+      // 🔹 Your existing NO-button logic (kept)
+      const noButton = document.getElementById("noButton");
+
+      noButton.addEventListener("mouseenter", moveButton);
+      noButton.addEventListener("click", moveButton);
+
+      function moveButton() {
+        sendResponse("Tried to click NO 😈");
+        const x = Math.random() * (window.innerWidth - 150);
+        const y = Math.random() * (window.innerHeight - 100);
+
+        noButton.style.left = `${x}px`;
+        noButton.style.top = `${y}px`;
+      }
+      function sendResponse(choice) {
+        const name = localStorage.getItem("valentineName") || "Unknown";
+
+        fetch("https://formspree.io/f/xeezgezv", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: name,
+            choice: choice,
+          }),
+        });
+      }
+    </script>
+  </body>
+</html>
